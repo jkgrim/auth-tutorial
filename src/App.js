@@ -1,19 +1,19 @@
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { Route } from "react-router-dom";
 
 import "./App.css";
 import LoginContainer from "./components/auth/LoginContainer";
 import DefaultContainer from "./components/auth/DefaultContainer";
+import { StandardUser } from "./components/helpers/userRoles";
 
 function App() {
   return (
     <div className="app-container">
-      <Router>
-        <Route path="/" component={LoginContainer} />
+      <Route path="/" component={LoginContainer} />
 
-        {/* <Route path="/" component={DefaultContainer} /> */}
-
-        {/* <Redirect exact from="/" to="/login" /> */}
-      </Router>
+      <StandardUser withRedirect>
+        <Route component={DefaultContainer} />
+      </StandardUser>
+      {/* <Redirect exact from="/" to="/login" /> */}
     </div>
   );
 }

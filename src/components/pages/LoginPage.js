@@ -1,25 +1,75 @@
 import { useState, useContext, useEffect } from "react";
+import { useHistory } from "react-router-dom";
+
 import { UserContext } from "../UserProvider";
 
-export default function LoginPage() {
-  const { setUser, setAuthIsLoading } = useContext(UserContext);
+export default function LoginPage(props) {
+  const history = useHistory();
+  const { setUser, authIsLoading, setAuthIsLoading } = useContext(UserContext);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    setAuthIsLoading(true);
+    setErrorMsg("");
+
+    fetch("https://devpipeline-mock-api.herokuapp.com/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+      headers: {
+        "content-type": "application/json",
+      },
+      credentaials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.message === "Logged In") {
+          setUser(data.user);
+          setAuthIsLoading(false);
+          history.push("/dashboard");
+        }
+      })
+      .catch((err) => {
+        setAuthIsLoading(false);
+        setErrorMsg("Invalid Credentials");
+        console.error("Login Error: ", err);
+      });
+  }
 
   return (
     <div>
       <h1>Login</h1>
 
-      <form>
+      <form onSubmit={handleSubmit}>
         <div>
-          <input type="email" required />
+          <input
+            type="email"
+            placeholder="Email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </div>
 
         <div>
-          <input type="password" required />
+          <input
+            type="password"
+            placeholder="Password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </div>
 
         <div>
-          <input type="submit" />
+          {!authIsLoading ? <input type="submit" /> : <h1>...Submitting</h1>}
         </div>
+        {errorMsg}
       </form>
     </div>
   );
