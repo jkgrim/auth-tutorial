@@ -6,7 +6,7 @@ export default function LoginContainer() {
   return (
     <Switch>
       <Route exact path="/" component={HomePage} />
-      <Route exact path="/login" component={LoginPage} />
+      <Route path="/login" component={LoginPage} />
     </Switch>
   );
 }
